@@ -38,6 +38,7 @@ dev
 
 .vscode
 .idea
+.yarn
 
 # docker-compose env files
 .env

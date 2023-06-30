@@ -3,15 +3,19 @@ import { SubmitKey } from "../store/config";
 const cn = {
   WIP: "该功能仍在开发中……",
   Error: {
-    Unauthorized:
-      "访问密码不正确或为空，请前往[登录](/#/auth)页输入正确的访问密码，或者在[设置](/#/settings)页填入你自己的 OpenAI API Key。",
+    // Unauthorized:
+    //   "访问密码不正确或为空，请前往[登录](/#/auth)页输入正确的访问密码，或者在[设置](/#/settings)页填入你自己的 OpenAI API Key。",
+    Unauthorized: "用户未登录，请前往[登录](/#/auth)页进行登录。",
+    LoginExpired: "登录已过期，请前往[登录](/#/auth)页重新登录。",
   },
   Auth: {
-    Title: "需要密码",
-    Tips: "管理员开启了密码验证，请在下方填入访问码",
-    Input: "在此处填写访问码",
+    Title: "登录",
+    Tips: "请输入您的账号与密码",
+    InputUser: "在此处填写账号",
+    Input: "在此处填写密码",
     Confirm: "确认",
     Later: "稍后再说",
+    WechatLogin: "微信登录",
   },
   ChatItem: {
     ChatItemCount: (count: number) => `${count} 条对话`,

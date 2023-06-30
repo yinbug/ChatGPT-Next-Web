@@ -5,21 +5,31 @@ import { getHeaders } from "../client/api";
 import { BOT_HELLO } from "./chat";
 import { ALL_MODELS } from "./config";
 import { getClientConfig } from "../config/client";
+import {
+  WECHAT_API,
+  WECHAT_APPID,
+  WECHAT_API_HOST,
+} from "@/app/wqzcir/constant";
 
 export interface AccessControlStore {
+  account: string;
   accessCode: string;
   token: string;
+  uid: number;
 
   needCode: boolean;
   hideUserApiKey: boolean;
   openaiUrl: string;
 
+  updateAccount: (_: string) => void;
+  updateUid: (_: number) => void;
   updateToken: (_: string) => void;
   updateCode: (_: string) => void;
   updateOpenAiUrl: (_: string) => void;
   enabledAccessControl: () => boolean;
   isAuthorized: () => boolean;
   fetch: () => void;
+  wechatLogin: (redirect_uri?: string, state?: string) => void;
 }
 
 let fetchState = 0; // 0 not fetch, 1 fetching, 2 done
@@ -33,6 +43,8 @@ export const useAccessStore = create<AccessControlStore>()(
     (set, get) => ({
       token: "",
       accessCode: "",
+      account: "",
+      uid: 0,
       needCode: true,
       hideUserApiKey: false,
       openaiUrl: DEFAULT_OPENAI_URL,
@@ -42,22 +54,45 @@ export const useAccessStore = create<AccessControlStore>()(
 
         return get().needCode;
       },
+      /**
+       * 发起微信登录
+       * @param redirect_uri 回调url
+       * @param state 传递参数
+       */
+      wechatLogin(redirect_uri: string = "", state: string = "") {
+        if (!state) {
+          state = "wechatLogin";
+        }
+        if (!redirect_uri) {
+          redirect_uri =
+            location.protocol +
+            "//interface.wqzcir.com/wechat/chatgpt_callback";
+        }
+        redirect_uri = encodeURIComponent(redirect_uri);
+        location.href = `${WECHAT_API_HOST}/${WECHAT_API.OauthLogin}?appid=${WECHAT_APPID}&redirect_uri=${redirect_uri}&response_type=code&scope=snsapi_login&state=${state}#wechat_redirect`;
+      },
+      updateUid(uid: number) {
+        set(() => ({ uid }));
+      },
       updateCode(code: string) {
         set(() => ({ accessCode: code }));
       },
       updateToken(token: string) {
         set(() => ({ token }));
       },
+      updateAccount(account: string) {
+        set(() => ({ account }));
+      },
       updateOpenAiUrl(url: string) {
         set(() => ({ openaiUrl: url }));
       },
       isAuthorized() {
         get().fetch();
-
+        return !!get().uid;
         // has token or has code or disabled access control
-        return (
-          !!get().token || !!get().accessCode || !get().enabledAccessControl()
-        );
+        // return (
+        //   !!get().token || !!get().accessCode || !get().enabledAccessControl()
+        // );
       },
       fetch() {
         if (fetchState > 0 || getClientConfig()?.buildMode === "export") return;

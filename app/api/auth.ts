@@ -1,12 +1,13 @@
 import { NextRequest } from "next/server";
 import { getServerSideConfig } from "../config/server";
-import md5 from "spark-md5";
+// import md5 from "spark-md5";
 import { ACCESS_CODE_PREFIX } from "../constant";
+import { getToken } from "next-auth/jwt";
+import { defaultAuthOption } from "@/app/wqzcir/next-auth-option";
 
 function getIP(req: NextRequest) {
   let ip = req.ip ?? req.headers.get("x-real-ip");
   const forwardedFor = req.headers.get("x-forwarded-for");
-
   if (!ip && forwardedFor) {
     ip = forwardedFor.split(",").at(0) ?? "";
   }
@@ -24,27 +25,40 @@ function parseApiKey(bearToken: string) {
   };
 }
 
-export function auth(req: NextRequest) {
+function parseJwt(bearToken: string) {
+  const token = bearToken.trim().replaceAll("Bearer ", "").trim();
+
+  return {
+    accessCode: token.slice(ACCESS_CODE_PREFIX.length),
+    apiKey: "",
+  };
+}
+
+export async function auth(req: NextRequest) {
   const authToken = req.headers.get("Authorization") ?? "";
 
-  // check if it is openai api key or user token
-  const { accessCode, apiKey: token } = parseApiKey(authToken);
+  const ip = getIP(req);
+  console.log("[User IP] ", ip);
 
-  const hashedCode = md5.hash(accessCode ?? "").trim();
-
-  const serverConfig = getServerSideConfig();
-  console.log("[Auth] allowed hashed codes: ", [...serverConfig.codes]);
+  // 预留的jwt验证模式
+  const { accessCode, apiKey: token } = parseJwt(authToken);
+  const secret = defaultAuthOption.secret;
+  const cookieName = defaultAuthOption.cookies?.sessionToken?.name;
+  const jwToken = await getToken({ req, secret, cookieName });
+  console.log("[JWT DATA]", jwToken);
+  let tkJson = JSON.stringify(jwToken, null, 2);
   console.log("[Auth] got access code:", accessCode);
-  console.log("[Auth] hashed access code:", hashedCode);
-  console.log("[User IP] ", getIP(req));
   console.log("[Time] ", new Date().toLocaleString());
 
-  if (serverConfig.needCode && !serverConfig.codes.has(hashedCode) && !token) {
+  // 使用session验证方式替代官方的密码验证
+  if (!jwToken) {
     return {
       error: true,
-      msg: !accessCode ? "empty access code" : "wrong access code",
+      msg: "用户未登录",
     };
   }
+
+  const serverConfig = getServerSideConfig();
 
   // if user does not provide an api key, inject system api key
   if (!token) {

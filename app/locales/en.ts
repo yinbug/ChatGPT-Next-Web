@@ -6,13 +6,16 @@ const en: LocaleType = {
   Error: {
     Unauthorized:
       "Unauthorized access, please enter access code in [auth](/#/auth) page.",
+    LoginExpired: "登录已过期，请前往[登录](/#/auth)页重新登录。",
   },
   Auth: {
-    Title: "Need Access Code",
-    Tips: "Please enter access code below",
-    Input: "access code",
-    Confirm: "Confirm",
-    Later: "Later",
+    Title: "登录",
+    Tips: "请输入您的账号与密码",
+    InputUser: "在此处填写账号",
+    Input: "在此处填写密码",
+    Confirm: "确认",
+    Later: "稍后再说",
+    WechatLogin: "微信登录",
   },
   ChatItem: {
     ChatItemCount: (count: number) => `${count} messages`,

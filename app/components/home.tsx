@@ -20,11 +20,14 @@ import {
   Routes,
   Route,
   useLocation,
+  useNavigate,
 } from "react-router-dom";
 import { SideBar } from "./sidebar";
 import { useAppConfig } from "../store/config";
 import { AuthPage } from "./auth";
 import { getClientConfig } from "../config/client";
+
+import { useAccessStore } from "../store";
 
 export function Loading(props: { noLogo?: boolean }) {
   return (
@@ -112,9 +115,19 @@ function Screen() {
   const isAuth = location.pathname === Path.Auth;
   const isMobileScreen = useMobileScreen();
 
+  const access = useAccessStore();
+  const navigate = useNavigate();
+
   useEffect(() => {
     loadAsyncGoogleFont();
   }, []);
+
+  /**
+   * 如果未登录，又不是在登录页，强制跳转到登录页
+   */
+  if (!access.isAuthorized() && !isAuth) {
+    navigate(Path.Auth);
+  }
 
   return (
     <div

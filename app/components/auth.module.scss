@@ -9,6 +9,17 @@
   .auth-logo {
     transform: scale(1.4);
   }
+  
+  .auth-wechat{
+    font-size: 14px;
+      text-align: center;
+      margin: 15px auto;    
+      cursor: pointer;
+
+      &:hover{
+        opacity: .72;
+      }
+  }
 
   .auth-title {
     font-size: 24px;
@@ -21,14 +32,14 @@
   }
 
   .auth-input {
-    margin: 3vh 0;
+    margin: 1.5vh 0;
   }
 
   .auth-actions {
     display: flex;
     justify-content: center;
     flex-direction: column;
-
+    margin-top: 10px;
     button:not(:last-child) {
       margin-bottom: 10px;
     }
