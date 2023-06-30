@@ -36,6 +36,7 @@ const authOptions: NextAuthOptions = {
         console.log("[请求参数] ", credentials);
 
         let uid = null;
+        let username = "";
         let accessToken = "";
         let refreshToken = "";
         const body = credentials;
@@ -141,6 +142,7 @@ const authOptions: NextAuthOptions = {
 
           const dataUser = await responseUser.json();
           uid = dataUser.data.userInfo.uid;
+          username = dataUser.data.userInfo.userName ?? "";
         } catch (err) {
           let msg = "网络请求异常";
           if (err instanceof Error) {
@@ -150,8 +152,7 @@ const authOptions: NextAuthOptions = {
         }
         const user = {
           id: uid,
-          name: uid,
-          email: "",
+          name: username,
           accessToken,
           refreshToken,
         };

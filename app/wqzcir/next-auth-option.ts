@@ -3,7 +3,6 @@ import type { NextAuthOptions } from "next-auth";
 export const defaultAuthOption: NextAuthOptions = {
   providers: [],
   debug: process.env.NODE_ENV !== "production",
-  secret: "OacqdzU7yEZn2zAHR7xnRkwLbk2K/wqzcir.com/eYg=",
   session: {
     // Choose how you want to save the user session.
     // The default is `"jwt"`, an encrypted JWT (JWE) stored in the session cookie.
@@ -42,6 +41,27 @@ export const defaultAuthOption: NextAuthOptions = {
         path: "/",
         // secure: process.env.NODE_ENV === "production"
       },
+    },
+  },
+  callbacks: {
+    async session({ session, token }) {
+      console.log("[开始生成session]", session, token);
+      if (token) {
+        // Send properties to the client, like an access_token and user id from a provider.
+        session.user.accessToken = token.accessToken;
+        session.user.id = token.id;
+        session.user.refreshToken = token.refreshToken;
+      }
+      return session;
+    },
+    async jwt({ token, user }) {
+      console.log("[开始生成jwt]", token, user);
+      if (user) {
+        token.id = user.id;
+        token.accessToken = user.accessToken;
+        token.refreshToken = user.refreshToken;
+      }
+      return token;
     },
   },
 };

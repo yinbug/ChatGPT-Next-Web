@@ -11,10 +11,6 @@ import WechatLogo from "../icons/wechat_logo.png";
 import Image from "next/image";
 import { signIn } from "next-auth/react";
 
-declare class LoginParam {
-  sign: string | null;
-}
-
 let loginLock = false;
 
 export function AuthPage() {
@@ -22,11 +18,12 @@ export function AuthPage() {
   const local = useLocation();
   const access = useAccessStore();
   const goHome = () => navigate(Path.Home);
+  const goAuth = () => navigate(Path.Auth);
   const urlSearch = new URLSearchParams(local.search);
   // 保存密码的变量
   let pwd = "";
 
-  const goLogin = function (sign?: string) {
+  const doLogin = function (sign?: string) {
     if (loginLock) {
       return;
     }
@@ -42,9 +39,12 @@ export function AuthPage() {
     }
     signIn("credentials", opt)
       .then((res) => {
-        console.log("[请求结果] ", res);
+        console.log("[请求结果]", res);
         if (res?.error) {
           alert(res.error);
+          if (sign) {
+            goAuth();
+          }
           return;
         }
 
@@ -66,7 +66,7 @@ export function AuthPage() {
 
   // 如果存在sign参数，则进行微信登录
   if (urlSearch.has("sign")) {
-    goLogin(urlSearch.get("sign") ?? undefined);
+    doLogin(urlSearch.get("sign") ?? undefined);
     return <div style={{ margin: "50vh auto" }}>登录中……</div>;
   }
 
@@ -103,7 +103,7 @@ export function AuthPage() {
           text={Locale.Auth.Confirm}
           type="primary"
           onClick={() => {
-            goLogin();
+            doLogin();
           }}
         />
 

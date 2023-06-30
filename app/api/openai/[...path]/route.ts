@@ -3,6 +3,8 @@ import { prettyObject } from "@/app/utils/format";
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "../../auth";
 import { requestOpenai } from "../../common";
+import { getServerSession } from "next-auth/next";
+import { defaultAuthOption } from "@/app/wqzcir/next-auth-option";
 
 const ALLOWD_PATH = new Set(Object.values(OpenaiPath));
 
@@ -29,6 +31,10 @@ async function handle(
       },
     );
   }
+
+  const session = await getServerSession(defaultAuthOption);
+  let uid = session?.user.id;
+  console.log("[访问session] ", session, uid);
 
   const authResult = await auth(req);
   if (authResult.error) {

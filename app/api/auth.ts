@@ -42,11 +42,10 @@ export async function auth(req: NextRequest) {
 
   // 预留的jwt验证模式
   const { accessCode, apiKey: token } = parseJwt(authToken);
-  const secret = defaultAuthOption.secret;
   const cookieName = defaultAuthOption.cookies?.sessionToken?.name;
-  const jwToken = await getToken({ req, secret, cookieName });
+  const jwToken = await getToken({ req, cookieName });
+
   console.log("[JWT DATA]", jwToken);
-  let tkJson = JSON.stringify(jwToken, null, 2);
   console.log("[Auth] got access code:", accessCode);
   console.log("[Time] ", new Date().toLocaleString());
 
