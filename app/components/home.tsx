@@ -29,6 +29,8 @@ import { getClientConfig } from "../config/client";
 
 import { useAccessStore } from "../store";
 
+import { SessionProvider } from "next-auth/react";
+
 export function Loading(props: { noLogo?: boolean }) {
   return (
     <div className={styles["loading-content"] + " no-dark"}>
@@ -145,7 +147,7 @@ function Screen() {
           <AuthPage />
         </>
       ) : (
-        <>
+        <SessionProvider>
           <SideBar className={isHome ? styles["sidebar-show"] : ""} />
 
           <div className={styles["window-content"]} id={SlotID.AppBody}>
@@ -157,7 +159,7 @@ function Screen() {
               <Route path={Path.Settings} element={<Settings />} />
             </Routes>
           </div>
-        </>
+        </SessionProvider>
       )}
     </div>
   );

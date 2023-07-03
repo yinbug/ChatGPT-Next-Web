@@ -40,6 +40,7 @@ COPY --from=builder /app/.next/server ./.next/server
 
 EXPOSE 3000
 
+# 172.19.112.119 是内网，不走代理
 CMD if [ -n "$PROXY_URL" ]; then \
         export HOSTNAME="127.0.0.1"; \
         protocol=$(echo $PROXY_URL | cut -d: -f1); \
@@ -53,6 +54,7 @@ CMD if [ -n "$PROXY_URL" ]; then \
         echo "tcp_connect_time_out 8000" >> $conf; \
         echo "localnet 127.0.0.0/255.0.0.0" >> $conf; \
         echo "localnet ::1/128" >> $conf; \
+        echo "localnet 172.19.112.119/255.255.255.255" >> $conf; \
         echo "[ProxyList]" >> $conf; \
         echo "$protocol $host $port" >> $conf; \
         cat /etc/proxychains.conf; \

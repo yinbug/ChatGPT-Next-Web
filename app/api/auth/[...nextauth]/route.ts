@@ -14,6 +14,7 @@ import HEX from "crypto-js/enc-hex";
 import Base64 from "crypto-js/enc-base64";
 import crypto_enc_utf8 from "crypto-js/enc-utf8";
 import { defaultAuthOption } from "@/app/wqzcir/next-auth-option";
+import { promisePool } from "@/app/wqzcir/mysql-client";
 
 const authOptions: NextAuthOptions = {
   // 导入默认配置
@@ -149,6 +150,15 @@ const authOptions: NextAuthOptions = {
             msg = err.message;
           }
           throw new Error(msg);
+        }
+
+        // 限制仅有内部用户可登录
+        const [rows] = await promisePool.query(
+          "SELECT * FROM cd_ipsms_userrole WHERE uid = ? AND role_id = 2",
+          [uid],
+        );
+        if (!(<any>rows).length) {
+          throw new Error("非授权用户");
         }
         const user = {
           id: uid,

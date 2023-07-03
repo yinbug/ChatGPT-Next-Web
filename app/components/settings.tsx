@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
+import { useSession } from "next-auth/react";
 
 import styles from "./settings.module.scss";
 
@@ -264,8 +265,20 @@ export function Settings() {
   const builtinCount = SearchService.count.builtin;
   const customCount = promptStore.getUserPrompts().length ?? 0;
   const [shouldShowPromptModal, setShowPromptModal] = useState(false);
+  const { data: session } = useSession({
+    required: true,
+    onUnauthenticated() {
+      // 未登录则跳转到登录页
+      navigate(Path.Auth);
+    },
+  });
 
-  const showUsage = accessStore.isAuthorized();
+  // const showUsage = accessStore.isAuthorized();
+  // 设置仅允许指定户访问时才展示api使用情况
+  const adminUid =
+    process.env.NODE_ENV !== "production" ? [58907, 12306] : [58907, 12306];
+  const showUsage = adminUid.includes(parseInt(session?.user.id ?? "0"));
+
   useEffect(() => {
     // checks per minutes
     checkUpdate();
@@ -467,9 +480,10 @@ export function Settings() {
           </ListItem>
         </List>
 
-        {/* 隐藏密码配置选项 */}
-        {/* <List>
-          {showAccessCode ? (
+        {showUsage ? (
+          <List>
+            {/* 隐藏密码输入 */}
+            {/* {showAccessCode ? (
             <ListItem
               title={Locale.Settings.AccessCode.Title}
               subTitle={Locale.Settings.AccessCode.SubTitle}
@@ -501,33 +515,34 @@ export function Settings() {
                 }}
               />
             </ListItem>
-          ) : null}
+          ) : null} */}
 
-          <ListItem
-            title={Locale.Settings.Usage.Title}
-            subTitle={
-              showUsage
-                ? loadingUsage
-                  ? Locale.Settings.Usage.IsChecking
-                  : Locale.Settings.Usage.SubTitle(
-                      usage?.used ?? "[?]",
-                      usage?.subscription ?? "[?]",
-                    )
-                : Locale.Settings.Usage.NoAccess
-            }
-          >
-            {!showUsage || loadingUsage ? (
-              <div />
-            ) : (
-              <IconButton
-                icon={<ResetIcon></ResetIcon>}
-                text={Locale.Settings.Usage.Check}
-                onClick={() => checkUsage(true)}
-              />
-            )}
-          </ListItem>
+            <ListItem
+              title={Locale.Settings.Usage.Title}
+              subTitle={
+                showUsage
+                  ? loadingUsage
+                    ? Locale.Settings.Usage.IsChecking
+                    : Locale.Settings.Usage.SubTitle(
+                        usage?.used ?? "[?]",
+                        usage?.subscription ?? "[?]",
+                      )
+                  : Locale.Settings.Usage.NoAccess
+              }
+            >
+              {!showUsage || loadingUsage ? (
+                <div />
+              ) : (
+                <IconButton
+                  icon={<ResetIcon></ResetIcon>}
+                  text={Locale.Settings.Usage.Check}
+                  onClick={() => checkUsage(true)}
+                />
+              )}
+            </ListItem>
 
-          {!accessStore.hideUserApiKey ? (
+            {/* 隐藏接口地址 */}
+            {/* {!accessStore.hideUserApiKey ? (
             <ListItem
               title={Locale.Settings.Endpoint.Title}
               subTitle={Locale.Settings.Endpoint.SubTitle}
@@ -540,8 +555,11 @@ export function Settings() {
                 }
               ></input>
             </ListItem>
-          ) : null}
-        </List> */}
+          ) : null} */}
+          </List>
+        ) : (
+          ""
+        )}
 
         <List>
           <ListItem

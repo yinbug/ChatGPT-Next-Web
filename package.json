@@ -31,6 +31,7 @@
     "html-to-image": "^1.11.11",
     "jsonwebtoken": "^9.0.0",
     "mermaid": "^10.2.3",
+    "mysql2": "^3.4.3",
     "next": "^13.4.3",
     "next-auth": "^4.22.1",
     "node-fetch": "^3.3.1",
