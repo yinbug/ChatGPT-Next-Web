@@ -10,10 +10,9 @@ export const WECHAT_API = {
 export const WQZCIR_OPEN_TYPE = "IR";
 export const WQZCIR_CLIENT = "CHATGPT";
 
-// "https://server.wqzcir.com/auth"
 export const WQZCIR_AUTH_HOST =
   process.env.NODE_ENV === "production"
-    ? "https://172.19.123.169/auth"
+    ? "https://server.wqzcir.com/auth"
     : "https://test-server.wqzcir.com:8043/auth";
 export const WQZCIR_AUTH_API = {
   WechatLogin: "/oauth/login-wechat",

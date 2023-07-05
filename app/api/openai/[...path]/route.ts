@@ -59,15 +59,14 @@ async function handle(
   }
 
   let bodyMsg = clonedBody?.messages ?? [];
-  let userLogs = bodyMsg.filter((i: any) => i?.role === "user");
-  let userLogsLen = userLogs.length;
+  let msgLen = bodyMsg.length;
   // 记录用户最新的消息文本
-  if (userLogsLen) {
+  if (msgLen && bodyMsg[msgLen - 1]?.role === "user") {
     const postLogs = {
       application_name: "chatgpt",
       username: uid,
       ip: getIP(req),
-      content: userLogs[userLogsLen - 1].content,
+      content: bodyMsg[msgLen - 1].content,
       useragent: req.headers.get("User-Agent"),
       url: req.url,
       type: 2,
