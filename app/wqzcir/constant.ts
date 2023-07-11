@@ -7,7 +7,7 @@ export const WECHAT_API = {
   OauthLogin: "connect/qrconnect",
 };
 
-export const WQZCIR_OPEN_TYPE = "IR";
+export const WQZCIR_OPEN_TYPE = "IR_WEB";
 export const WQZCIR_CLIENT = "CHATGPT";
 
 export const WQZCIR_AUTH_HOST =
