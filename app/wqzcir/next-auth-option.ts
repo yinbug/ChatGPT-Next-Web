@@ -45,7 +45,7 @@ export const defaultAuthOption: NextAuthOptions = {
   },
   callbacks: {
     async session({ session, token }) {
-      console.log("[开始生成session]", session, token);
+      // console.log("[开始生成session]", session, token);
       if (token) {
         // Send properties to the client, like an access_token and user id from a provider.
         session.user.accessToken = token.accessToken;
@@ -55,7 +55,7 @@ export const defaultAuthOption: NextAuthOptions = {
       return session;
     },
     async jwt({ token, user }) {
-      console.log("[开始生成jwt]", token, user);
+      // console.log("[开始生成jwt]", token, user);
       if (user) {
         token.id = user.id;
         token.accessToken = user.accessToken;

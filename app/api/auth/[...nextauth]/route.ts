@@ -15,6 +15,7 @@ import Base64 from "crypto-js/enc-base64";
 import crypto_enc_utf8 from "crypto-js/enc-utf8";
 import { defaultAuthOption } from "@/app/wqzcir/next-auth-option";
 import { promisePool } from "@/app/wqzcir/mysql-client";
+import { error } from "console";
 
 const authOptions: NextAuthOptions = {
   // 导入默认配置
@@ -78,7 +79,11 @@ const authOptions: NextAuthOptions = {
             headers: {
               "Content-Type": "application/json",
             },
+          }).catch((error) => {
+            console.error(["调用微信登录失败"], url, error);
+            throw new Error(error.msg ?? error);
           });
+
           const data = await response.json();
 
           if (data.status === "20011") {
@@ -113,6 +118,9 @@ const authOptions: NextAuthOptions = {
             headers: {
               "Content-Type": "application/json",
             },
+          }).catch((error) => {
+            console.error(["账号密码登录失败"], url, error);
+            throw new Error(error.msg ?? error);
           });
           const dataPwd = await responsePwd.json();
 
