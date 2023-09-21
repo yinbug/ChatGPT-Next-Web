@@ -66,7 +66,7 @@ export const useAccessStore = create<AccessControlStore>()(
         if (!redirect_uri) {
           redirect_uri =
             location.protocol +
-            "//interface.wqzcir.com/wechat/chatgpt_callback";
+            "//interface.wise-info.cn/wechat/chatgpt_callback";
         }
         redirect_uri = encodeURIComponent(redirect_uri);
         location.href = `${WECHAT_API_HOST}/${WECHAT_API.OauthLogin}?appid=${WECHAT_APPID}&redirect_uri=${redirect_uri}&response_type=code&scope=snsapi_login&state=${state}#wechat_redirect`;

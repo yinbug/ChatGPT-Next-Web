@@ -7,6 +7,12 @@
   flex-direction: column;
 
   .auth-logo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    margin-bottom: 20px;
     transform: scale(1.4);
   }
   
