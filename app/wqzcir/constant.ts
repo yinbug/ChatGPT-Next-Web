@@ -1,5 +1,5 @@
 export const AES_KEY = "935456kwo0123wqzcir@2023";
-export const AES_IV = "ipsms.wise-info.cn";
+export const AES_IV = "ipsms.wqzcir.com";
 
 export const WECHAT_APPID = "wx9c03ffd044b38c73";
 export const WECHAT_API_HOST = "https://open.weixin.qq.com";
